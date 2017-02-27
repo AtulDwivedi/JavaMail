@@ -1,6 +1,8 @@
 package com.atuldwivedi.javamail.send;
 
+import java.util.Locale;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -12,6 +14,15 @@ import javax.mail.internet.MimeMessage;
 
 public class SimpleMailThruSSL {
 	public static void main(String[] args) {
+
+		ResourceBundle rb = ResourceBundle.getBundle("com//atuldwivedi//javamail//send//email", Locale.US);
+		String userName = rb.getString("username");
+		String password = rb.getString("password");
+		String fromAddr = rb.getString("from");
+		String toAddr = rb.getString("to");
+		String subject = rb.getString("subject");
+		String text = rb.getString("text");
+
 		Properties props = new Properties();
 		props.put("mail.smtp.host", "smtp.gmail.com");
 		props.put("mail.smtp.socketFactory.port", "465");
@@ -21,25 +32,24 @@ public class SimpleMailThruSSL {
 		props.put("mail.smtp.port", "465");
 
 		Session session = Session.getDefaultInstance(props,
-			new javax.mail.Authenticator() {
-				protected PasswordAuthentication getPasswordAuthentication() {
-					return new PasswordAuthentication("atul.wnw","*******");
-				}
-			});
+				new javax.mail.Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(userName, password);
+			}
+		});
 
 		try {
 
 			Message message = new MimeMessage(session);
-			message.setFrom(new InternetAddress("atul.wnw@gmail.com"));
+			message.setFrom(new InternetAddress(fromAddr));
 			message.setRecipients(Message.RecipientType.TO,
-					InternetAddress.parse("atul.allcom@gmail.com"));
-			message.setSubject("JavaMail API Testing");
-			message.setText("This is just a test mail," +
-					"\n\n not a spam, please understand!");
+					InternetAddress.parse(toAddr));
+			message.setSubject(subject+" - SimpleMailThruSSL");
+			message.setText(text);
 
 			Transport.send(message);
 
-			System.out.println("Done");
+			System.out.println("Sent!");
 
 		} catch (MessagingException e) {
 			throw new RuntimeException(e);

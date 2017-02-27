@@ -1,6 +1,8 @@
 package com.atuldwivedi.javamail.send;
 
+import java.util.Locale;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -14,57 +16,52 @@ public class SimpleMailThruTLS {
 
 	public static void main(String[] args) {
 
-		 // Recipient's email ID needs to be mentioned.
-	      String to = "atul.allcom@gmail.com";
+		ResourceBundle rb = ResourceBundle.getBundle("com//atuldwivedi//javamail//send//email", Locale.US);
+		String userName = rb.getString("username");
+		String password = rb.getString("password");
+		String fromAddr = rb.getString("from");
+		String toAddr = rb.getString("to");
+		String subject = rb.getString("subject");
+		String text = rb.getString("text");
 
-	      // Sender's email ID needs to be mentioned
-	      String from = "atul.wnw@gmail.com";
-	      final String username = "atul.wnw@gmail.com";//change accordingly
-	      final String password = "**********";//change accordingly
+		Properties props = new Properties();
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.starttls.enable", "true");
+		props.put("mail.smtp.host", "smtp.gmail.com");
+		props.put("mail.smtp.port", "25");
 
-	      // Assuming you are sending email through relay.jangosmtp.net
-	      String host = "smtp.gmail.com";
+		// Get the Session object.
+		Session session = Session.getInstance(props,
+				new javax.mail.Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(userName, password);
+			}
+		});
 
-	      Properties props = new Properties();
-	      props.put("mail.smtp.auth", "true");
-	      props.put("mail.smtp.starttls.enable", "true");
-	      props.put("mail.smtp.host", host);
-	      props.put("mail.smtp.port", "25");
+		try {
+			// Create a default MimeMessage object.
+			Message message = new MimeMessage(session);
 
-	      // Get the Session object.
-	      Session session = Session.getInstance(props,
-	         new javax.mail.Authenticator() {
-	            protected PasswordAuthentication getPasswordAuthentication() {
-	               return new PasswordAuthentication(username, password);
-		   }
-	         });
+			// Set From: header field of the header.
+			message.setFrom(new InternetAddress(fromAddr));
 
-	      try {
-		   // Create a default MimeMessage object.
-		   Message message = new MimeMessage(session);
-		
-		   // Set From: header field of the header.
-		   message.setFrom(new InternetAddress(from));
-		
-		   // Set To: header field of the header.
-		   message.setRecipients(Message.RecipientType.TO,
-	               InternetAddress.parse(to));
-		
-		   // Set Subject: header field
-		   message.setSubject("Testing Subject");
-		
-		   // Now set the actual message
-		   message.setText("Hello, this is sample for to check send " +
-			"email using JavaMailAPI ");
+			// Set To: header field of the header.
+			message.setRecipients(Message.RecipientType.TO,
+					InternetAddress.parse(toAddr));
 
-		   // Send message
-		   Transport.send(message);
+			// Set Subject: header field
+			message.setSubject(subject+" - SimpleMailThruTLS");
 
-		   System.out.println("Sent message successfully....");
+			// Now set the actual message
+			message.setText(text);
 
-	      } catch (MessagingException e) {
-	         throw new RuntimeException(e);
-	      }
-	   }
+			// Send message
+			Transport.send(message);
 
+			System.out.println("Sent!");
+
+		} catch (MessagingException e) {
+			throw new RuntimeException(e);
+		}
 	}
+}

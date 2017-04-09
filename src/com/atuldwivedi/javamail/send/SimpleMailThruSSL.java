@@ -16,8 +16,8 @@ public class SimpleMailThruSSL {
 	public static void main(String[] args) {
 
 		ResourceBundle rb = ResourceBundle.getBundle("com//atuldwivedi//javamail//send//email", Locale.US);
-		String userName = rb.getString("username");
-		String password = rb.getString("password");
+		final String userName = rb.getString("username");
+		final String password = rb.getString("password");
 		String fromAddr = rb.getString("from");
 		String toAddr = rb.getString("to");
 		String subject = rb.getString("subject");

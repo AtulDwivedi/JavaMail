@@ -10,6 +10,7 @@ import javax.mail.MessagingException;
 import javax.mail.NoSuchProviderException;
 import javax.mail.Session;
 import javax.mail.Store;
+import javax.mail.internet.MimeMultipart;
 
 public class ReadMail {
 
@@ -48,7 +49,7 @@ public class ReadMail {
 				System.out.println("Email Number " + (i + 1));
 				System.out.println("Subject: " + message.getSubject());
 				System.out.println("From: " + message.getFrom()[0]);
-				System.out.println("Text: " + message.getContent().toString());
+				System.out.println("Text: " + ((MimeMultipart)message.getContent()).getBodyPart(0).getContent());
 			}
 			
 			//close the store and folder objects
